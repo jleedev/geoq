@@ -4,7 +4,7 @@ use geo_types::Point;
 use serde_json;
 
 fn get_ip_geolocation() -> Result<(), Error> {
-    let resp = reqwest::get("http://ip-api.com/json");
+    let resp = reqwest::blocking::get("http://ip-api.com/json");
     if let Err(e) = resp {
         eprintln!("Error fetching IP geolocation: {:?}", e);
         return Err(Error::IPGeolocationError);

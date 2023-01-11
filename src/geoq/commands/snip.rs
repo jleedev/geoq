@@ -26,8 +26,8 @@ pub fn run() -> Result<(), Error> {
     let fc_json = GeoJson::from(fc).to_string();
 
     if fc_json.len() < SNIP_LIMIT {
-        let client = reqwest::Client::builder()
-            .redirect(reqwest::RedirectPolicy::none())
+        let client = reqwest::blocking::Client::builder()
+            .redirect(reqwest::redirect::Policy::none())
             .build()?;
         let resp = client
             .post("https://contour.app/scratchpad")

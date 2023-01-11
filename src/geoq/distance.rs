@@ -111,7 +111,7 @@ mod tests {
             vec![],
         );
         let polyg = Geometry::Polygon(poly);
-        println!("{}", polyg.to_wkt().items.pop().unwrap());
+        println!("{}", polyg.to_wkt().item);
         match distance(&la, &polyg) {
             Some(d) => assert_eq!(d.round(), 0.),
             None => assert!(false, "Should get distance"),

@@ -69,12 +69,10 @@ fn wkt_entities(raw: &String) -> Result<Vec<Entity>, Error> {
     let wkt_res: Result<wkt::Wkt<f64>, &str> = wkt::Wkt::from_str(&raw);
     let mut entities = Vec::new();
     match wkt_res {
-        Ok(wkts) => {
-            for wkt_geom in wkts.items {
-                let wkt_raw = wkt_geom.to_string();
-                let geom: Geometry<f64> = wkt_geom.try_into().unwrap();
-                entities.push(Entity::Wkt(wkt_raw, geom))
-            }
+        Ok(wkt) => {
+            let wkt_raw = wkt.item.to_string();
+            let geom: Geometry<f64> = wkt.item.try_into().unwrap();
+            entities.push(Entity::Wkt(wkt_raw, geom))
         }
         Err(_e) => return Err(Error::InvalidWkt),
     }
@@ -134,9 +132,7 @@ impl Entity {
     }
 
     pub fn wkt(&self) -> wkt::Geometry<f64> {
-        let geom = self.geom();
-        let mut wkt = geom.to_wkt();
-        wkt.items.pop().unwrap()
+        self.geom().to_wkt().item
     }
 
     pub fn bbox(&self) -> geo::Rect<f64> {

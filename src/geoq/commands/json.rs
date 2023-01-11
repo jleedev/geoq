@@ -6,6 +6,7 @@ use serde_json;
 use serde_json::{json, Map, Value};
 use std::convert::TryInto;
 use std::io::{self, BufRead};
+use wkt::TryFromWkt;
 
 pub fn find_number(
     v: &Map<String, Value>,
@@ -72,16 +73,7 @@ fn latlon_point(v: &Map<String, Value>) -> Option<(Geom, Vec<&'static str>)> {
 
 fn wkt_geom(v: &Map<String, Value>) -> Option<(Geom, Vec<&'static str>)> {
     let str_opt_with_key = find_string(v, &vec!["geometry", "wkt"]);
-    str_opt_with_key
-        .and_then(|(k, v)| wkt::Wkt::from_str(&v).ok().map(|wkt| (k, wkt)))
-        .and_then(|(k, wkt)| {
-            if wkt.items.is_empty() {
-                None
-            } else {
-                let geom: Option<Geom> = wkt.try_into().ok();
-                geom.map(|geom| (geom, vec![k]))
-            }
-        })
+    str_opt_with_key.and_then(|(k, v)| Geom::try_from_wkt_str(&v).ok().map(|geom| (geom, vec![k])))
 }
 
 fn geojson_str_geom(v: &Map<String, Value>) -> Option<(Geom, Vec<&'static str>)> {
